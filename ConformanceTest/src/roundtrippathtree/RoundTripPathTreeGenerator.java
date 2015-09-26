@@ -20,12 +20,7 @@ public class RoundTripPathTreeGenerator {
 		this.nodesToDevelop = new ArrayList<TreeNode>();
 	}
 	
-	public static void main(String[] args) {
-		RoundTripPathTreeGenerator rg = new RoundTripPathTreeGenerator();
-		rg.buildRoundTripPathTree("ccoinbox.xml");
-	}
-	
-	public void buildRoundTripPathTree(String filename) {
+	public TreeNode buildRoundTripPathTree(String filename) {
 		PersistenceStateMachine.loadStateMachine(filename);
 		sm = StateMachine.getInstance();
 		
@@ -42,6 +37,7 @@ public class RoundTripPathTreeGenerator {
 		}
 		
 		printRoundTripPathTree(root, "", true);
+		return root;
 	}
 	
 	private void exploreNodeAndTransitions(TreeNode node) {
@@ -58,6 +54,7 @@ public class RoundTripPathTreeGenerator {
 				TreeEdge newTreeEdge = new TreeEdge(transition, undevelopedNode);
 				node.addTreeEdge(newTreeEdge);
 				
+				// loops in state machine
 				if (!undevelopedNode.getStateName().equals(currentStateName)) {
 					nodesToDevelop.add(undevelopedNode);
 				}
@@ -90,6 +87,7 @@ public class RoundTripPathTreeGenerator {
 		TreeEdge edge;
 		for (int i = 0; i < edges.size(); i++) {
 			edge = edges.get(i);
+			System.out.println(edge.getTransitionData().getEvent() + " " + edge.getTransitionData().getAction());
 			printRoundTripPathTree(edge.getToNode(), indent, i == edges.size() - 1);
 		}
 	}
